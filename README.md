@@ -57,7 +57,11 @@ https://www.genymotion.com/fun-zone/
 ├── App.js - Applicaiton home, main page
 ├── package.json # npm package manager file. It's unlikely that you'll need to modify this. 
 ├── utils
-│   ├── api.js  # Sets up AsyncStorage 
+│   ├── api.js  # Sets up AsyncStorage with hellp methods
+│        └── retrieveDecks: return all of the decks along with their titles, questions, and answers. 
+│        └── saveDeck: take in a single id argument and return the deck associated with that id. 
+│        └── removeCard: take two parameter id and card. 
+│        └── saveCard: take in two arguments and will add the card to the list of questions for the deck 
 │   └── colors  # Add additional colos
 │   └── helpers # Defines notification logic if user has not completed at least one Quiz for that day
 └── Root
