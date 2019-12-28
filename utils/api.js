@@ -39,8 +39,6 @@ export const removeDeck = (deckId, navigation) => {
 
         delete data[deckId];
 
-        // AsyncStorage.setItem(UDACICARDS_STORAGE_KEY, JSON.stringify(data));  
-        // navigation.popToTop();
         AsyncStorage.setItem(UDACICARDS_STORAGE_KEY, JSON.stringify(data)).then
             (navigation.navigate("Home"));
 
