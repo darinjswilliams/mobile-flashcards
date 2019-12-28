@@ -12,7 +12,7 @@ import Deck from './components/Deck'
 import Quiz from './components/QuizView'
 import Constants from 'expo-constants'
 
-import { purple, white } from './utils/colors'
+import { lightskyblue, whitesmoke } from './utils/colors'
 
 function UdaciStatusBar({ backgroundColor, ...props }) {
   return (
@@ -48,10 +48,10 @@ const Tabs = createBottomTabNavigator(
       header: null
     },
     tabBarOptions: {
-      activeTintColor: purple,
+      activeTintColor: lightskyblue,
       style: {
         height: 60,
-        backgroundColor: white,
+        backgroundColor: whitesmoke,
         shadowColor: 'rgba(0, 0, 0, 0.24)',
         shadowOffset: {
           width: 0,
@@ -97,10 +97,10 @@ const MainNavigator = createAppContainer(createStackNavigator(
   {
     initialRouteName: "Home",
     defaultNavigationOptions: ({ navigation }) => ({
-      headerTintColor: white,
+      headerTintColor: whitesmoke,
       title: 'Deck',
       headerStyle: {
-        backgroundColor: purple,
+        backgroundColor: lightskyblue,
       },
       headerTitleStyle: { width: Dimensions.get("window").width }
     })
@@ -113,7 +113,7 @@ class App extends Component {
       <Provider store={createStore(reducer)}>
         <View style={{ flex: 1 }}>
           <UdaciStatusBar
-            backgroundColor={purple}
+            backgroundColor={lightskyblue}
             barStyle="light-content"
           />
           <MainNavigator />
