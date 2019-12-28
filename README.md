@@ -59,7 +59,7 @@ https://www.genymotion.com/fun-zone/
 ├── utils
 │   ├── api.js  # Sets up AsyncStorage 
 │   └── colors  # Add additional colos
-│   └── helpers # defines notificaiton
+│   └── helpers # Defines notification logic if user has not completed at least one Quiz for that day
 └── Root
     ├── actions 
     │   ├── index.js
