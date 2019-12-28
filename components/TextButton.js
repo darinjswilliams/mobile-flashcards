@@ -1,25 +1,34 @@
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
-import CardFlip from 'react-native-card-flip'
+import { Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { blue, green, gray } from '../utils/colors'
 
-const cardView = (props) => {
-    return <View style={{ flex: 1, alignItems: "center", }}>
-
-        <CardFlip ref={card => this.card = card} style={{ width: "90%", marginTop: 80, height: 400 }} >
-
-            <TouchableOpacity style={{ backgroundColor: "#b2e7e7", width: "95%", height: 200 }}
-                onPress={() => this.card.flip()} >
-                <Text style={{ textAlign: "center" ,fontSize:18}}>{props.question}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{ backgroundColor: "#009e9e", width: "95%", height: 200 }}
-                onPress={() => this.card.flip()} >
-                <Text style={{ textAlign: "center",fontSize:18 }}>{props.answer}</Text>
-            </TouchableOpacity>
-
-        </CardFlip>
-
-    </View>
+export default function TextButton ({ children, onPress,disabled, style = {}  }) {
+  return (
+    <TouchableOpacity onPress={onPress} disabled={disabled} style={ disabled ?[styles.buttonReset,style] : [styles.button, style]}>
+      <Text style={[styles.reset, style]}>{children}</Text>
+    </TouchableOpacity>
+  )
 }
 
-export default cardView 
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 5,
+    backgroundColor: green,
+    margin: 10,
+    padding: 15,
+    width: 300
+  },
+  reset: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: blue
+  },
+  buttonReset: {
+    borderRadius: 5,
+    backgroundColor: gray,
+    margin: 10,
+    padding: 15,
+    width: 300
+  },
+});

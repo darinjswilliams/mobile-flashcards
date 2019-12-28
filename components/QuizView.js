@@ -1,85 +1,226 @@
 import React, { Component } from 'react'
-import { View, Text, } from 'react-native'
-import { Button } from 'react-native-elements';
-import Card from './cardView'
+import { connect } from 'react-redux'
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
+import TextButton from './TextButton'
+import { clearLocalNotification, setLocalNotification } from '../utils/helpers'
+import { blue, white, red, green, purple } from '../utils/colors'
+import { ProgressBarAndroid } from 'react-native'
 
+const initialState = {
+    showQuestion: true,
+    showResult: false,
+    trueCounter: 0,
+    index: 0,
+    progressValue: 0
+};
 
-class quizView extends Component {
-    constructor(props) {
-        super(props)
+class QuizView extends Component {
+    state = initialState;
 
-        this.state = {
-            cards: [],
-            index: 0,
-            total: 0,
-            score: 0
+    restartQuiz = () => {
+        this.setState(initialState);
+    };
+
+    handleButtonPress = () => {
+        const { showQuestion } = this.state
+        this.setState({
+            showQuestion: !showQuestion
+        });
+    }
+
+    stopProgress = () => {
+        clearInterval(this.timerValue);
+    }
+
+    startProgress = (localTrueCounter) => {
+
+        const resultPercent = localTrueCounter / this.props.deck.cards.length;        
+
+        if (resultPercent > 0) {
+            this.timerValue = setInterval(() => {        
+                if (this.state.progressValue <= resultPercent) {
+                    this.setState({ progressValue: this.state.progressValue + .03 })
+                }
+                else {
+                    this.setState({ progressValue:resultPercent});
+                    this.stopProgress();
+                }
+            }, 1);
+        }
+    }
+
+    handleTrueOrFalse = (clickedButton, length) => {
+
+        const { trueCounter, index } = this.state;
+        const localTrueCounter=clickedButton === 'trueButton' ? trueCounter + 1 : trueCounter;
+        if ((index + 1) === length) {
+            this.setState({
+                showResult: true,
+                trueCounter: localTrueCounter 
+            })
+            clearLocalNotification();
+            setLocalNotification();
+            this.startProgress(localTrueCounter);
+        }
+        else {
+            this.setState({
+                showQuestion: true,
+                trueCounter: localTrueCounter,
+                index: index + 1
+            });
         }
     }
 
 
-    componentDidMount() {
-        const cards = this.props.navigation.getParam('cards', [])
-        this.setState({ cards, total: cards.length })
-    }
-
-    pressCorrect = () => {
-        const newIndex = this.state.index < this.state.total ? this.state.index + 1 : this.state.index
-
-        this.setState({ index: newIndex, score: this.state.score + 1 })
-    }
-
-    pressIncorrect = () => {
-        const newIndex = this.state.index < this.state.total ? this.state.index + 1 : this.state.index
-        this.setState({ index: newIndex, })
-    }
-
-    pressBack = () => {
-        const title = this.props.navigation.getParam('title', 'no-title')
-        this.props.navigation.navigate('DECK', { title })
-
-    }
-
-    display = () => { // display the next card (question/answer) when ever the buttons are clicked
-        const { cards, index } = this.state
-        const card = cards[index]
-        const { answer, question } = card !== undefined ? card : { answer: '', question: '' }
-        return <Card answer={answer} question={question} />
-    }
-
     render() {
-        const { index, total, score } = this.state
-        return <View style={{ flex: 1 }}>
-            {
-                this.state.total > index ? <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>Question {index + 1} out of {total}</Text>
+        const { deck } = this.props;
+        const { showQuestion, showResult, index, progressValue } = this.state
+        
+        
+        return (
+            <View style={styles.thirdContainer}>
+                {!showResult && (
+                    <View style={styles.container}>
+                        <View>
+                            {showQuestion ?
+                                <Text style={styles.text}>Q ({index + 1} of {deck.cards.length}): {deck.cards[index].question}</Text>
+                                : <Text style={styles.text}>Answer: {deck.cards[index].answer}</Text>
 
-                    <View style={{ marginTop: 0, width: "90%", height: 400, }}>
-                        {this.display()}
-                    </View>
-
-                    <View style={{ width: "50%", marginTop: 50, height: 20 }}>
-                        <Button type="solid" title="Correct" color="green" onPress={this.pressCorrect} />
-                    </View>
-                    <View style={{ width: "50%", marginTop: 30, height: 20 }}>
-                        <Button type="solid" title="Incorrect" color="red" onPress={this.pressIncorrect} />
-                    </View>
-                </View> : <View style={{ marginTop: 150, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 18 }}>Your score is : {this.state.score} </Text>
-                        <Text style={{ marginBottom: 5, fontSize: 18 }}>Correct answers : {score !== 0 ? `% ${Number(100 * (score / total)).toFixed(2)}` : 0} </Text>
-                        
-                        <View style={{ marginTop: 18 }}>
-                            <Button type="outline" style={{ marginBottom: 5 }} title="Restart Quiz" color="blue" onPress={() => this.setState({ index: 0, score: 0 })} />
+                            }
                         </View>
 
-                        <View style={{ marginTop: 10,marginBottom:20 }}>
-                            <Button type="outline" style={{ marginBottom: 5 }} title="Back to Deck" color="blue" onPress={this.pressBack} />
+                        <View style={{ marginTop: 30 }}>
+
+                            <TextButton onPress={this.handleButtonPress}>
+                                {showQuestion ? <Text>Show Answer</Text> : <Text>Show Question</Text>}
+                            </TextButton>
+
                         </View>
 
                     </View>
-            }
+                )}
+                {!showResult && (
+                    <View style={styles.secondContainer}>
+                        <Text style={styles.heading}>How did you performed in this question?</Text>
+                        <View style={styles.actions}>
+                            <TouchableOpacity
+                                style={[styles.answerBtn, { backgroundColor: green }]}
+                                onPress={() => this.handleTrueOrFalse('trueButton', deck.cards.length)}>
+                                <Text style={styles.btnText}>Correct</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => this.handleTrueOrFalse('falseButton', deck.cards.length)}
+                                style={[styles.answerBtn, { backgroundColor: red }]}>
+                                <Text style={styles.btnText}>Incorrect</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
 
-        </View>
+                {
+                    showResult && (
+                        <View style={styles.thirdContainer}>                            
+                            <ProgressBarAndroid styleAttr='Horizontal' style={styles.progressbar} progress={progressValue} indeterminate={false}>                                
+                            </ProgressBarAndroid >
+
+                            <Text style={styles.heading}> Showing result </Text>
+                            <Text style={styles.result}> {(progressValue*100).toFixed(2)}%</Text>
+                            <View style={styles.resultActions}>
+                                <TextButton
+                                    onPress={() => this.restartQuiz()}
+                                >Restart Quiz
+                            </TextButton>
+                                <TextButton
+                                    onPress={() => this.props.navigation.goBack()}
+                                >Back To Deck
+                            </TextButton>
+                            </View>
+                        </View>
+                    )
+                }
+            </View>
+        );
     }
 }
 
-export default quizView
+
+function mapStateToProps(state, { navigation }) {
+
+    return {
+        deck: navigation.getParam('deck')
+    }
+}
+
+const styles = StyleSheet.create({
+    progressbar: {
+        width: 300,
+        transform: [{ scaleX: 1.0 }, { scaleY: 3.5 }],
+        marginBottom: 40
+    },
+    container: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: blue,
+        padding: 30,
+        width: 350,
+        height: 250,
+        borderRadius: 5,
+        shadowRadius: 5,
+        shadowOpacity: 0.8,
+        shadowColor: 'rgba(0, 0, 0, 0.24)',
+        shadowOffset: {
+            width: 4,
+            height: 5
+        }
+    },
+    text: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: white
+    },
+    secondContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 50
+    },
+    heading: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    actions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20
+    },
+    answerBtn: {
+        padding: 20,
+        margin: 10,
+        width: 150,
+        borderRadius: 5
+    },
+    btnText: {
+        color: white,
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    thirdContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: white
+    },
+    result: {
+        fontSize: 70,
+        color: purple,
+        textAlign: 'center'
+    },
+    resultActions: {
+        marginTop: 50
+    }
+
+});
+
+export default connect(mapStateToProps, null)(QuizView);

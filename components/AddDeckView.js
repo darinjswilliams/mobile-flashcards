@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, TextInput, KeyboardAvoidingView, StyleSheet } from 'react-native'
 import TextButton from './TextButton'
-import { white, gray } from '../utils/colors'
+import { whitesmoke, gray } from '../utils/colors'
 import { connect } from 'react-redux'
 import { createDeck } from '../actions'
 import { generateId } from '../utils/helpers'
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     input: {        
-        backgroundColor: white,
+        backgroundColor: whitesmoke,
         width: 350,
         fontSize: 20,
         height: 50,

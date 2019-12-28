@@ -4,7 +4,7 @@ import { Text, TextInput, KeyboardAvoidingView, View, StyleSheet } from 'react-n
 import TextButton from './TextButton'
 import { createCard } from '../actions'
 import { saveCard } from '../utils/api'
-import { white, gray } from '../utils/colors'
+import { whitesmoke, gray} from '../utils/colors'
 
 class AddCardView extends Component {
     state = {
@@ -79,7 +79,7 @@ const mapDispatchToProps = dispatch => ({
       textAlign: 'center'
     },
     input: {
-      backgroundColor: white,
+      backgroundColor: whitesmoke,
       width: 350,
       fontSize: 20,
       height: 50,
