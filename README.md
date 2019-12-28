@@ -106,7 +106,7 @@ Expo on the App Store (iOS)
 
 ## Create React App Native
 
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app). You can find more information on how to perform common tasks [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
+This project was bootstrapped with [Create React App](https://facebook.github.io/react-native/docs/getting-started). You can find more information on how to perform common tasks [here](https://facebook.github.io/react-native/docs/tutorial).
 
 ### What are the limitations of Create React Native App?
 
